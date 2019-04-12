@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/mateusmaaia/simple-go-compiler/pkg/lexer"
+	"github.com/mateusmaaia/Lexeme-and-Token-Translator/pkg/lexer"
 )
 
 // Reading files requires checking most calls for errors.

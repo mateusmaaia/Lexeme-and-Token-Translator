@@ -3,7 +3,7 @@ package lexer_test
 import (
 	"testing"
 
-	"github.com/mateusmaaia/simple-go-compiler/pkg/lexer"
+	"github.com/mateusmaaia/Lexeme-and-Token-Translator/pkg/lexer"
 )
 
 func TestUnknownTokenError(t *testing.T) {

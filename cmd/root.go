@@ -2,7 +2,7 @@ package cmd
 
 import (
 	"fmt"
-	"github.com/mateusmaaia/simple-go-compiler/cmd/lexicalAnalysis"
+	"github.com/mateusmaaia/Lexeme-and-Token-Translator/cmd/lexicalAnalysis"
 	"github.com/spf13/cobra"
 	"os"
 )

@@ -2,21 +2,20 @@ package lexer_test
 
 import (
 	"fmt"
-	"github.com/macrat/simplexer"
 	"strings"
 
-	"github.com/mateusmaaia/simple-go-compiler/pkg/lexer"
+	"github.com/mateusmaaia/Lexeme-and-Token-Translator/pkg/lexer"
 )
 
 func Example() {
 	input := "hello_world = \"hello world\"\nnumber = 1"
-	lexer := lexer.NewLexer(strings.NewReader(input))
+	lexerAnalysis := lexer.NewLexer(strings.NewReader(input))
 
 	fmt.Println(input)
 	fmt.Println("==========")
 
 	for {
-		token, err := lexer.Scan()
+		token, err := lexerAnalysis.Scan()
 		if err != nil {
 			panic(err.Error())
 		}
@@ -47,10 +46,10 @@ func Example() {
 
 func Example_positionInformation() {
 	input := "this is a\ntest string\n"
-	lexer := simplexer.NewLexer(strings.NewReader(input))
+	lexerAnalysis := lexer.NewLexer(strings.NewReader(input))
 
 	for {
-		token, err := lexer.Scan()
+		token, err := lexerAnalysis.Scan()
 		if err != nil {
 			panic(err.Error())
 		}
@@ -58,7 +57,7 @@ func Example_positionInformation() {
 			break
 		}
 
-		fmt.Printf("%d: %s\n", token.Position.Line, lexer.GetLastLine())
+		fmt.Printf("%d: %s\n", token.Position.Line, lexerAnalysis.GetLastLine())
 		fmt.Printf(" | %s%s\n\n",
 			strings.Repeat(" ", token.Position.Column),
 			strings.Repeat("=", len(token.Literal)))
@@ -83,26 +82,26 @@ func Example_positionInformation() {
 
 func Example_addOriginalTokenType() {
 	const (
-		SUBSITUATION simplexer.TokenID = iota
+		SUBSITUATION lexer.TokenID = iota
 		NEWLINE
 	)
 
 	input := "hello_world = \"hello world\"\nnumber = 1"
-	lexer := simplexer.NewLexer(strings.NewReader(input))
+	lexerAnalysis := lexer.NewLexer(strings.NewReader(input))
 
-	lexer.Whitespace = simplexer.NewPatternTokenType(-1, []string{"\t", " "})
+	lexerAnalysis.Whitespace = lexer.NewPatternTokenType(-1, []string{"\t", " "})
 	// lexer.Whitespace = simplexer.NewRegexpTokenType(-1, `[\t ]`)  // same mean above
 
-	lexer.TokenTypes = append([]simplexer.TokenType{
-		simplexer.NewPatternTokenType(SUBSITUATION, []string{"="}),
-		simplexer.NewRegexpTokenType(NEWLINE, `^[\n\r]+`),
-	}, lexer.TokenTypes...)
+	lexerAnalysis.TokenTypes = append([]lexer.TokenType{
+		lexer.NewPatternTokenType(SUBSITUATION, []string{"="}),
+		lexer.NewRegexpTokenType(NEWLINE, `^[\n\r]+`),
+	}, lexerAnalysis.TokenTypes...)
 
 	fmt.Println(input)
 	fmt.Println("==========")
 
 	for {
-		token, err := lexer.Scan()
+		token, err := lexerAnalysis.Scan()
 		if err != nil {
 			panic(err.Error())
 		}
