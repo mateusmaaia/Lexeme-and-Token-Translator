@@ -2,9 +2,11 @@ package main
 
 import (
 	"fmt"
-	lexicalAnalysis "github.com/mateusmaaia/simple-go-compiler/pkg"
 	"io/ioutil"
+	"os"
 	"strings"
+
+	"github.com/mateusmaaia/simple-go-compiler/pkg/lexer"
 )
 
 // Reading files requires checking most calls for errors.
@@ -18,29 +20,37 @@ func check(e error) {
 func main() {
 
 	fileByte, err := ioutil.ReadFile("examples/math/sum.txt")
+	fileName := "sum.txt"
 	check(err)
 
 	file := string(fileByte)
 
-	lexer := lexicalAnalysis.NewLexer(strings.NewReader(file))
+	lexerAnalysis := lexer.NewLexer(strings.NewReader(file))
 
-	fmt.Println(file)
-	fmt.Println("==========")
+	var fileContent string
+	outputFile, err := os.Create("results/"+fileName)
+	defer outputFile.Close()
+	check(err)
 
-	for {
-		token, err := lexer.Scan()
+	fileContent = "==========\n"
+
+	for true {
+		token, err := lexerAnalysis.Scan()
 		if err != nil {
 			panic(err.Error())
 		}
 		if token == nil {
-			fmt.Println("==========")
-			return
+			fileContent += ("==========")
+			break
 		}
 
-		fmt.Printf("line %2d, column %2d: %s: %s\n",
+		fileContent += fmt.Sprintf("line %2d, column %2d: %s: %s\n",
 			token.Position.Line,
 			token.Position.Column,
 			token.Type,
 			token.Literal)
 	}
+
+	_, err = outputFile.WriteString(fileContent)
+
 }

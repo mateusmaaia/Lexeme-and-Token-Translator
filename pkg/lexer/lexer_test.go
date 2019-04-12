@@ -1,4 +1,4 @@
-package pkg_test
+package lexer_test
 
 import (
 	"strings"
