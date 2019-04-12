@@ -2,10 +2,12 @@ package lexer_test
 
 import (
 	"testing"
+
+	"github.com/mateusmaaia/simple-go-compiler/pkg/lexer"
 )
 
 func TestUnknownTokenError(t *testing.T) {
-	err := UnknownTokenError{Literal: "test", Position: Position{Line: 0, Column: 1}}
+	err := lexer.UnknownTokenError{Literal: "test", Position: lexer.Position{Line: 0, Column: 1}}
 	except := "1:2:UnknownTokenError: \"test\""
 
 	if err.Error() != except {

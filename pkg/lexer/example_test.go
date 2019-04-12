@@ -2,14 +2,15 @@ package lexer_test
 
 import (
 	"fmt"
+	"github.com/macrat/simplexer"
 	"strings"
 
-	"github.com/macrat/simplexer"
+	"github.com/mateusmaaia/simple-go-compiler/pkg/lexer"
 )
 
 func Example() {
 	input := "hello_world = \"hello world\"\nnumber = 1"
-	lexer := simplexer.NewLexer(strings.NewReader(input))
+	lexer := lexer.NewLexer(strings.NewReader(input))
 
 	fmt.Println(input)
 	fmt.Println("==========")

@@ -4,18 +4,18 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/macrat/simplexer"
+	"github.com/mateusmaaia/simple-go-compiler/pkg/lexer"
 )
 
 type want struct {
-	TypeID   simplexer.TokenID
+	TypeID   lexer.TokenID
 	Literal  string
-	Pos      simplexer.Position
+	Pos      lexer.Position
 	LastLine string
 }
 
 func execute(t *testing.T, input string, wants []want) {
-	lexer := simplexer.NewLexer(strings.NewReader(input))
+	lexer := lexer.NewLexer(strings.NewReader(input))
 
 	for _, except := range wants {
 		token, err := lexer.Scan()
@@ -54,39 +54,39 @@ func execute(t *testing.T, input string, wants []want) {
 func TestLexer(t *testing.T) {
 	execute(t, "\t10; literal\nhoge = \"abc\"", []want{
 		{
-			TypeID:   simplexer.NUMBER,
+			TypeID:   lexer.NUMBER,
 			Literal:  "10",
-			Pos:      simplexer.Position{Line: 0, Column: 1},
+			Pos:      lexer.Position{Line: 0, Column: 1},
 			LastLine: "\t10; literal",
 		},
 		{
-			TypeID:   simplexer.OTHER,
+			TypeID:   lexer.OTHER,
 			Literal:  ";",
-			Pos:      simplexer.Position{Line: 0, Column: 3},
+			Pos:      lexer.Position{Line: 0, Column: 3},
 			LastLine: "\t10; literal",
 		},
 		{
-			TypeID:   simplexer.IDENT,
+			TypeID:   lexer.IDENT,
 			Literal:  "literal",
-			Pos:      simplexer.Position{Line: 0, Column: 5},
+			Pos:      lexer.Position{Line: 0, Column: 5},
 			LastLine: "\t10; literal",
 		},
 		{
-			TypeID:   simplexer.IDENT,
+			TypeID:   lexer.IDENT,
 			Literal:  "hoge",
-			Pos:      simplexer.Position{Line: 1, Column: 0},
+			Pos:      lexer.Position{Line: 1, Column: 0},
 			LastLine: "hoge = \"abc\"",
 		},
 		{
-			TypeID:   simplexer.OTHER,
+			TypeID:   lexer.OTHER,
 			Literal:  "=",
-			Pos:      simplexer.Position{Line: 1, Column: 5},
+			Pos:      lexer.Position{Line: 1, Column: 5},
 			LastLine: "hoge = \"abc\"",
 		},
 		{
-			TypeID:   simplexer.STRING,
+			TypeID:   lexer.STRING,
 			Literal:  "\"abc\"",
-			Pos:      simplexer.Position{Line: 1, Column: 7},
+			Pos:      lexer.Position{Line: 1, Column: 7},
 			LastLine: "hoge = \"abc\"",
 		},
 	})
@@ -95,45 +95,45 @@ func TestLexer(t *testing.T) {
 func TestLexer_oneLine(t *testing.T) {
 	execute(t, "this is \"one line\"", []want{
 		{
-			TypeID:   simplexer.IDENT,
+			TypeID:   lexer.IDENT,
 			Literal:  "this",
-			Pos:      simplexer.Position{Line: 0, Column: 0},
+			Pos:      lexer.Position{Line: 0, Column: 0},
 			LastLine: "this is \"one line\"",
 		},
 		{
-			TypeID:   simplexer.IDENT,
+			TypeID:   lexer.IDENT,
 			Literal:  "is",
-			Pos:      simplexer.Position{Line: 0, Column: 5},
+			Pos:      lexer.Position{Line: 0, Column: 5},
 			LastLine: "this is \"one line\"",
 		},
 		{
-			TypeID:   simplexer.STRING,
+			TypeID:   lexer.STRING,
 			Literal:  "\"one line\"",
-			Pos:      simplexer.Position{Line: 0, Column: 8},
+			Pos:      lexer.Position{Line: 0, Column: 8},
 			LastLine: "this is \"one line\"",
 		},
 	})
 }
 
 func TestLexer_reportingError(t *testing.T) {
-	lexer := simplexer.NewLexer(strings.NewReader("1 2 error 3 4"))
-	lexer.TokenTypes = []simplexer.TokenType{
-		simplexer.NewRegexpTokenType(0, `^[0-9]+`),
+	lexerAnalysis := lexer.NewLexer(strings.NewReader("1 2 error 3 4"))
+	lexerAnalysis.TokenTypes = []lexer.TokenType{
+		lexer.NewRegexpTokenType(0, `^[0-9]+`),
 	}
 
-	if token, err := lexer.Scan(); err != nil {
+	if token, err := lexerAnalysis.Scan(); err != nil {
 		t.Fatalf("%s", err.Error())
 	} else if token.Literal != "1" {
 		t.Fatalf("except 1 but got %s", token.Literal)
 	}
 
-	if token, err := lexer.Scan(); err != nil {
+	if token, err := lexerAnalysis.Scan(); err != nil {
 		t.Fatalf("%s", err.Error())
 	} else if token.Literal != "2" {
 		t.Fatalf("except 2 but got %s", token.Literal)
 	}
 
-	token, e := lexer.Scan()
+	token, e := lexerAnalysis.Scan()
 	if e == nil {
 		t.Fatalf("except error but got nil")
 	}
@@ -141,12 +141,12 @@ func TestLexer_reportingError(t *testing.T) {
 		t.Errorf("token when error except nil but got %s", token)
 	}
 
-	err, ok := e.(simplexer.UnknownTokenError)
+	err, ok := e.(lexer.UnknownTokenError)
 	if !ok {
 		t.Fatalf("except UnknownTokenError but got other error")
 	}
 
-	exceptPos := simplexer.Position{Line: 0, Column: 4}
+	exceptPos := lexer.Position{Line: 0, Column: 4}
 	if err.Position != exceptPos {
 		t.Errorf("position of error excepts %v but got %v", exceptPos, err.Position)
 	}
@@ -158,24 +158,24 @@ func TestLexer_reportingError(t *testing.T) {
 }
 
 func TestLexer_reportingError_withoutSpace(t *testing.T) {
-	lexer := simplexer.NewLexer(strings.NewReader("1 2 error3 4"))
-	lexer.TokenTypes = []simplexer.TokenType{
-		simplexer.NewRegexpTokenType(0, `^[0-9]+`),
+	lexerAnalysis := lexer.NewLexer(strings.NewReader("1 2 error3 4"))
+	lexerAnalysis.TokenTypes = []lexer.TokenType{
+		lexer.NewRegexpTokenType(0, `^[0-9]+`),
 	}
 
-	if token, err := lexer.Scan(); err != nil {
+	if token, err := lexerAnalysis.Scan(); err != nil {
 		t.Fatalf("%s", err.Error())
 	} else if token.Literal != "1" {
 		t.Fatalf("except 1 but got %s", token.Literal)
 	}
 
-	if token, err := lexer.Scan(); err != nil {
+	if token, err := lexerAnalysis.Scan(); err != nil {
 		t.Fatalf("%s", err.Error())
 	} else if token.Literal != "2" {
 		t.Fatalf("except 2 but got %s", token.Literal)
 	}
 
-	token, e := lexer.Scan()
+	token, e := lexerAnalysis.Scan()
 	if e == nil {
 		t.Fatalf("except error but got nil")
 	}
@@ -183,12 +183,12 @@ func TestLexer_reportingError_withoutSpace(t *testing.T) {
 		t.Errorf("token when error except nil but got %s", token)
 	}
 
-	err, ok := e.(simplexer.UnknownTokenError)
+	err, ok := e.(lexer.UnknownTokenError)
 	if !ok {
 		t.Fatalf("except UnknownTokenError but got other error")
 	}
 
-	exceptPos := simplexer.Position{Line: 0, Column: 4}
+	exceptPos := lexer.Position{Line: 0, Column: 4}
 	if err.Position != exceptPos {
 		t.Errorf("position of error excepts %v but got %v", exceptPos, err.Position)
 	}
@@ -200,18 +200,18 @@ func TestLexer_reportingError_withoutSpace(t *testing.T) {
 }
 
 func TestLexer_reportingError_atLast(t *testing.T) {
-	lexer := simplexer.NewLexer(strings.NewReader("12error"))
-	lexer.TokenTypes = []simplexer.TokenType{
-		simplexer.NewRegexpTokenType(0, `^[0-9]+`),
+	lexerAnalysis := lexer.NewLexer(strings.NewReader("12error"))
+	lexerAnalysis.TokenTypes = []lexer.TokenType{
+		lexer.NewRegexpTokenType(0, `^[0-9]+`),
 	}
 
-	if token, err := lexer.Scan(); err != nil {
+	if token, err := lexerAnalysis.Scan(); err != nil {
 		t.Fatalf("%s", err.Error())
 	} else if token.Literal != "12" {
 		t.Fatalf("except 12 but got %s", token.Literal)
 	}
 
-	token, e := lexer.Scan()
+	token, e := lexerAnalysis.Scan()
 	if e == nil {
 		t.Fatalf("except error but got nil")
 	}
@@ -219,12 +219,12 @@ func TestLexer_reportingError_atLast(t *testing.T) {
 		t.Errorf("token when error except nil but got %s", token)
 	}
 
-	err, ok := e.(simplexer.UnknownTokenError)
+	err, ok := e.(lexer.UnknownTokenError)
 	if !ok {
 		t.Fatalf("except UnknownTokenError but got other error")
 	}
 
-	exceptPos := simplexer.Position{Line: 0, Column: 2}
+	exceptPos := lexer.Position{Line: 0, Column: 2}
 	if err.Position != exceptPos {
 		t.Errorf("position of error excepts %v but got %v", exceptPos, err.Position)
 	}
@@ -236,11 +236,11 @@ func TestLexer_reportingError_atLast(t *testing.T) {
 }
 
 func TestLexer_Whitespace(t *testing.T) {
-	lexer := simplexer.NewLexer(strings.NewReader("\ta---b c"))
+	lexerAnalysis := lexer.NewLexer(strings.NewReader("\ta---b c"))
 
-	lexer.Whitespace = simplexer.NewRegexpTokenType(0, `[\s\t\r\n]+`)
+	lexerAnalysis.Whitespace = lexer.NewRegexpTokenType(0, `[\s\t\r\n]+`)
 
-	tok, err := lexer.Scan()
+	tok, err := lexerAnalysis.Scan()
 	if err != nil {
 		t.Fatalf("failed scan: %s", err.Error())
 	}
@@ -251,9 +251,9 @@ func TestLexer_Whitespace(t *testing.T) {
 		t.Errorf("excepted \"a\" but got %#v", tok.Literal)
 	}
 
-	lexer.Whitespace = simplexer.NewPatternTokenType(0, []string{"-"})
+	lexerAnalysis.Whitespace = lexer.NewPatternTokenType(0, []string{"-"})
 
-	tok, err = lexer.Scan()
+	tok, err = lexerAnalysis.Scan()
 	if err != nil {
 		t.Fatalf("failed scan: %s", err.Error())
 	}
@@ -264,9 +264,9 @@ func TestLexer_Whitespace(t *testing.T) {
 		t.Errorf("excepted \"b\" but got %#v", tok.Literal)
 	}
 
-	lexer.Whitespace = nil
+	lexerAnalysis.Whitespace = nil
 
-	tok, err = lexer.Scan()
+	tok, err = lexerAnalysis.Scan()
 	if err != nil {
 		t.Fatalf("failed scan: %s", err.Error())
 	}
@@ -277,7 +277,7 @@ func TestLexer_Whitespace(t *testing.T) {
 		t.Errorf("excepted \" \" but got %#v", tok.Literal)
 	}
 
-	tok, err = lexer.Scan()
+	tok, err = lexerAnalysis.Scan()
 	if err != nil {
 		t.Fatalf("failed scan: %s", err.Error())
 	}

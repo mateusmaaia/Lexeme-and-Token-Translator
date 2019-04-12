@@ -5,24 +5,24 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/macrat/simplexer"
+	"github.com/mateusmaaia/simple-go-compiler/pkg/lexer"
 )
 
 func ExampleNewRegexpTokenType() {
 	const (
-		NUMBER simplexer.TokenID = iota
+		NUMBER lexer.TokenID = iota
 		OTHERS
 	)
 
-	lexer := simplexer.NewLexer(strings.NewReader("123this is test456"))
+	lexerAnalysis := lexer.NewLexer(strings.NewReader("123this is test456"))
 
-	lexer.TokenTypes = []simplexer.TokenType{
-		simplexer.NewRegexpTokenType(NUMBER, `[0-9]+`),
-		simplexer.NewRegexpTokenType(OTHERS, `[^0-9]+`),
+	lexerAnalysis.TokenTypes = []lexer.TokenType{
+		lexer.NewRegexpTokenType(NUMBER, `[0-9]+`),
+		lexer.NewRegexpTokenType(OTHERS, `[^0-9]+`),
 	}
 
 	for {
-		token, _ := lexer.Scan()
+		token, _ := lexerAnalysis.Scan()
 		if token == nil {
 			break
 		}
@@ -44,19 +44,19 @@ func ExampleNewRegexpTokenType() {
 
 func ExampleNewPatternTokenType() {
 	const (
-		HOGE simplexer.TokenID = iota
+		HOGE lexer.TokenID = iota
 		OTHERS
 	)
 
-	lexer := simplexer.NewLexer(strings.NewReader("this is hoge and HOGE or Hoge"))
+	lexerAnalysis := lexer.NewLexer(strings.NewReader("this is hoge and HOGE or Hoge"))
 
-	lexer.TokenTypes = []simplexer.TokenType{
-		simplexer.NewPatternTokenType(HOGE, []string{"hoge", "HOGE"}),
-		simplexer.NewRegexpTokenType(OTHERS, `[^ ]+`),
+	lexerAnalysis.TokenTypes = []lexer.TokenType{
+		lexer.NewPatternTokenType(HOGE, []string{"hoge", "HOGE"}),
+		lexer.NewRegexpTokenType(OTHERS, `[^ ]+`),
 	}
 
 	for {
-		token, _ := lexer.Scan()
+		token, _ := lexerAnalysis.Scan()
 		if token == nil {
 			break
 		}
@@ -81,13 +81,13 @@ func ExampleNewPatternTokenType() {
 }
 
 func TestRegexpTokenType(t *testing.T) {
-	tt := simplexer.NewRegexpTokenType(1, `[0-9]+(\.[0-9]+)?`)
+	tt := lexer.NewRegexpTokenType(1, `[0-9]+(\.[0-9]+)?`)
 
-	if tok := tt.FindToken("not match 123", simplexer.Position{}); tok != nil {
+	if tok := tt.FindToken("not match 123", lexer.Position{}); tok != nil {
 		t.Errorf("excepted nil but got %#v", tok)
 	}
 
-	pos := simplexer.Position{Line: 1, Column: 2}
+	pos := lexer.Position{Line: 1, Column: 2}
 
 	if tok := tt.FindToken("123.1abc", pos); tok == nil {
 		t.Errorf("excepted token but got nil")
@@ -111,13 +111,13 @@ func TestRegexpTokenType(t *testing.T) {
 }
 
 func TestPatternTokenType(t *testing.T) {
-	tt := simplexer.NewPatternTokenType(1, []string{"abc", "def"})
+	tt := lexer.NewPatternTokenType(1, []string{"abc", "def"})
 
-	if tok := tt.FindToken("not match abc", simplexer.Position{}); tok != nil {
+	if tok := tt.FindToken("not match abc", lexer.Position{}); tok != nil {
 		t.Errorf("excepted nil but got %#v", tok)
 	}
 
-	pos := simplexer.Position{Line: 1, Column: 2}
+	pos := lexer.Position{Line: 1, Column: 2}
 
 	if tok := tt.FindToken("abc def", pos); tok == nil {
 		t.Errorf("excepted token but got nil")
