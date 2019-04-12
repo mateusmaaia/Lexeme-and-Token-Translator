@@ -1,9 +1,10 @@
-package main
+package lexicalAnalysis
 
 import (
 	"fmt"
 	"io/ioutil"
 	"os"
+	"regexp"
 	"strings"
 
 	"github.com/mateusmaaia/simple-go-compiler/pkg/lexer"
@@ -17,10 +18,11 @@ func check(e error) {
 	}
 }
 
-func main() {
+func Read(path string) bool {
 
-	fileByte, err := ioutil.ReadFile("examples/math/sum.txt")
-	fileName := "sum.txt"
+	fileByte, err := ioutil.ReadFile(path)
+	fileName := getFileName(path)
+
 	check(err)
 
 	file := string(fileByte)
@@ -52,5 +54,13 @@ func main() {
 	}
 
 	_, err = outputFile.WriteString(fileContent)
+	check(err)
 
+	return true
+}
+
+func getFileName(path string) string {
+	r,_ := regexp.Compile("[^/]+$")
+	fileName := r.FindString(path)
+	return fileName
 }
