@@ -95,8 +95,6 @@ func Read(path string) bool {
 			)
 	}
 
-	fmt.Print(x)
-
 	_, err = outputFile.WriteString(fileContent)
 	check(err)
 
