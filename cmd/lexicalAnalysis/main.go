@@ -88,7 +88,7 @@ func Read(path string) bool {
 	}
 
 	for _, values := range x.tokens {
-		fileContent += fmt.Sprintf("Name: %s, Type: %s, Positions (Column Line): %v\n",
+		fileContent += fmt.Sprintf("Name: %s, Type: %s, Positions(CxL): %v\n",
 				values.name,
 				values.tokenType,
 				values.positions,
