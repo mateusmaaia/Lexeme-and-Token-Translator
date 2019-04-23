@@ -12,6 +12,8 @@ var (
 	DefaultTokenTypes = []TokenType{
 		NewRegexpTokenType(IDENT, `[a-zA-Z_][a-zA-Z0-9_]*`),
 		NewRegexpTokenType(NUMBER, `[0-9]+(?:\.[0-9]+)?`),
+		NewRegexpTokenType(OPENPARENTHESIS, `\("`),
+		NewRegexpTokenType(CLOSEPARENTHESIS, `\)"`),
 		NewRegexpTokenType(STRING, `\"([^"]*)\"`),
 		NewRegexpTokenType(OTHER, `.`),
 	}

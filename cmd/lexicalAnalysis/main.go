@@ -9,7 +9,24 @@ import (
 
 	"github.com/mateusmaaia/Lexeme-and-Token-Translator/pkg/lexer"
 )
+type (
+	tokenMap struct {
+		tokens map[string]token
+		size int
+	}
 
+	token struct {
+		name string
+		tokenType lexer.TokenType
+		positions []position
+		tokenMapPosition int
+	}
+
+	position struct {
+		column int
+		line int
+	}
+)
 // Reading files requires checking most calls for errors.
 // This helper will streamline our error checks below.
 func check(e error) {
@@ -19,6 +36,8 @@ func check(e error) {
 }
 
 func Read(path string) bool {
+	x := tokenMap{}
+	x.tokens = make(map[string]token)
 
 	fileByte, err := ioutil.ReadFile(path)
 	fileName := getFileName(path)
@@ -34,24 +53,49 @@ func Read(path string) bool {
 	defer outputFile.Close()
 	check(err)
 
-	fileContent = "==========\n"
 
 	for true {
-		token, err := lexerAnalysis.Scan()
+		lexerToken, err := lexerAnalysis.Scan()
 		if err != nil {
 			panic(err.Error())
 		}
-		if token == nil {
-			fileContent += ("==========")
+		if lexerToken == nil {
 			break
 		}
 
-		fileContent += fmt.Sprintf("line %2d, column %2d: %s: %s\n",
-			token.Position.Line,
-			token.Position.Column,
-			token.Type,
-			token.Literal)
+		if pointerHack, ok := x.tokens[lexerToken.Literal]; ok {
+			pointerHack.positions = append(pointerHack.positions, position{
+				lexerToken.Position.Column,
+				lexerToken.Position.Line,
+			})
+			x.tokens[lexerToken.Literal] = pointerHack
+		} else {
+			currentPosition := []position{}
+			finalPosition := append(currentPosition, position{
+				lexerToken.Position.Column,
+				lexerToken.Position.Line,
+			})
+
+			x.size++
+
+			x.tokens[lexerToken.Literal] = token{
+				lexerToken.Literal,
+				lexerToken.Type,
+				finalPosition,
+				x.size,
+			}
+		}
 	}
+
+	for _, values := range x.tokens {
+		fileContent += fmt.Sprintf("Name: %s, Type: %s, Positions (Column Line): %v\n",
+				values.name,
+				values.tokenType,
+				values.positions,
+			)
+	}
+
+	fmt.Print(x)
 
 	_, err = outputFile.WriteString(fileContent)
 	check(err)

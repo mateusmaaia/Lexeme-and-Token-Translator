@@ -15,7 +15,9 @@ const (
 	IDENT
 	NUMBER
 	STRING
-)
+	OPENPARENTHESIS
+	CLOSEPARENTHESIS
+	)
 
 /*
 Convert to readable string.
@@ -32,6 +34,10 @@ func (id TokenID) String() string {
 		return "NUMBER"
 	case STRING:
 		return "STRING"
+	case OPENPARENTHESIS:
+		return "OPEN PARENTHESIS"
+	case CLOSEPARENTHESIS:
+		return "CLOSE PARENTHESIS"
 	default:
 		return "UNKNOWN(" + strconv.Itoa(int(id)) + ")"
 	}
