@@ -48,12 +48,18 @@ func Read(path string) bool {
 
 	lexerAnalysis := lexer.NewLexer(strings.NewReader(file))
 
-	var fileContent string
-	outputFile, err := os.Create("results/"+fileName)
-	defer outputFile.Close()
+	var simbleTable string
+	var tokenFlow string
+
+	outputFileSimbleTable, err := os.Create("results/simbleTable_"+fileName)
+	defer outputFileSimbleTable.Close()
 	check(err)
 
+	outputFileTokenFlow, err := os.Create("results/tokenFlow_"+fileName)
+	defer outputFileTokenFlow.Close()
+	check(err)
 
+	var olderLine int
 	for true {
 		lexerToken, err := lexerAnalysis.Scan()
 		if err != nil {
@@ -85,17 +91,29 @@ func Read(path string) bool {
 				x.size,
 			}
 		}
+
+		actualLine := lexerToken.Position.Line
+
+		if actualLine > olderLine {
+			tokenFlow += fmt.Sprintf("\n")
+		}
+
+		tokenFlow += fmt.Sprintf("<%s,%v>", lexerToken.Type, x.tokens[lexerToken.Literal].tokenMapPosition)
+		olderLine = lexerToken.Position.Line
 	}
 
 	for _, values := range x.tokens {
-		fileContent += fmt.Sprintf("Name: %s, Type: %s, Positions(CxL): %v\n",
+		simbleTable += fmt.Sprintf("Name: %s, Type: %s, Positions(CxL): %v\n",
 				values.name,
 				values.tokenType,
 				values.positions,
 			)
 	}
 
-	_, err = outputFile.WriteString(fileContent)
+	_, err = outputFileTokenFlow.WriteString(tokenFlow)
+	check(err)
+
+	_, err = outputFileSimbleTable.WriteString(simbleTable)
 	check(err)
 
 	return true

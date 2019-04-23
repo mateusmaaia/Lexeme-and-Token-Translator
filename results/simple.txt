@@ -1,5 +1,0 @@
-Name: 1, Type: NUMBER, Positions: [{0 0}]
-Name: +, Type: OTHER, Positions: [{2 0}]
-Name: 2, Type: NUMBER, Positions: [{4 0}]
-Name: =, Type: OTHER, Positions: [{6 0}]
-Name: 3, Type: NUMBER, Positions: [{8 0} {0 2}]
