@@ -12,11 +12,14 @@ type TokenID int
 // Default token IDs.
 const (
 	OTHER TokenID = -(iota + 1)
-	IDENT
+	ID
 	NUMBER
 	STRING
 	OPENPARENTHESIS
 	CLOSEPARENTHESIS
+	ENDOFSTATEMENT
+	OPERATOR
+	ASSIGNOP
 	)
 
 /*
@@ -28,8 +31,8 @@ func (id TokenID) String() string {
 	switch id {
 	case OTHER:
 		return "OTHER"
-	case IDENT:
-		return "IDENT"
+	case ID:
+		return "ID"
 	case NUMBER:
 		return "NUMBER"
 	case STRING:
@@ -38,6 +41,12 @@ func (id TokenID) String() string {
 		return "OPEN PARENTHESIS"
 	case CLOSEPARENTHESIS:
 		return "CLOSE PARENTHESIS"
+	case ENDOFSTATEMENT:
+		return "END OF STATEMENT"
+	case OPERATOR:
+		return "OPERATOR"
+	case ASSIGNOP:
+		return "ASSINGOP"
 	default:
 		return "UNKNOWN(" + strconv.Itoa(int(id)) + ")"
 	}

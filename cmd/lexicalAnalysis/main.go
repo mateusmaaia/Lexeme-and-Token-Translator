@@ -23,8 +23,8 @@ type (
 	}
 
 	position struct {
-		column int
 		line int
+		column int
 	}
 )
 // Reading files requires checking most calls for errors.
@@ -71,15 +71,16 @@ func Read(path string) bool {
 
 		if pointerHack, ok := x.tokens[lexerToken.Literal]; ok {
 			pointerHack.positions = append(pointerHack.positions, position{
-				lexerToken.Position.Column,
 				lexerToken.Position.Line,
+				lexerToken.Position.Column,
+
 			})
 			x.tokens[lexerToken.Literal] = pointerHack
 		} else {
 			currentPosition := []position{}
 			finalPosition := append(currentPosition, position{
-				lexerToken.Position.Column,
 				lexerToken.Position.Line,
+				lexerToken.Position.Column,
 			})
 
 			x.size++
@@ -103,7 +104,7 @@ func Read(path string) bool {
 	}
 
 	for _, values := range x.tokens {
-		simbleTable += fmt.Sprintf("Name: %s, Type: %s, Positions(CxL): %v\n",
+		simbleTable += fmt.Sprintf("Lexeme: %s, Token: %s, Positions(LxC): %v\n",
 				values.name,
 				values.tokenType,
 				values.positions,
