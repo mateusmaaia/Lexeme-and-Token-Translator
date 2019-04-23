@@ -104,7 +104,7 @@ func Read(path string) bool {
 	}
 
 	for _, values := range x.tokens {
-		simbleTable += fmt.Sprintf("Lexeme: %s, Token: %s, Positions(LxC): %v\n",
+		simbleTable += fmt.Sprintf("Lexeme: %s, Token: %s, Positions(LxC): %v\r\n",
 				values.name,
 				values.tokenType,
 				values.positions,
