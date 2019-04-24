@@ -48,10 +48,10 @@ func Read(path string) bool {
 
 	lexerAnalysis := lexer.NewLexer(strings.NewReader(file))
 
-	var simbleTable string
+	var symbolTable string
 	var tokenFlow string
 
-	outputFileSimbleTable, err := os.Create("results/simbleTable_"+fileName)
+	outputFileSimbleTable, err := os.Create("results/symbolTable_"+fileName)
 	defer outputFileSimbleTable.Close()
 	check(err)
 
@@ -93,6 +93,8 @@ func Read(path string) bool {
 			}
 		}
 
+
+
 		actualLine := lexerToken.Position.Line
 
 		if actualLine > olderLine {
@@ -104,7 +106,7 @@ func Read(path string) bool {
 	}
 
 	for _, values := range x.tokens {
-		simbleTable += fmt.Sprintf("Lexeme: %s, Token: %s, Positions(LxC): %v\r\n",
+		symbolTable += fmt.Sprintf("Lexeme: %s, Token: %s, Positions(LxC): %v\r\n",
 				values.name,
 				values.tokenType,
 				values.positions,
@@ -114,7 +116,7 @@ func Read(path string) bool {
 	_, err = outputFileTokenFlow.WriteString(tokenFlow)
 	check(err)
 
-	_, err = outputFileSimbleTable.WriteString(simbleTable)
+	_, err = outputFileSimbleTable.WriteString(symbolTable)
 	check(err)
 
 	return true
