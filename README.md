@@ -25,5 +25,7 @@ It will generate 2 new files that you can find at `results`:
 
     symbolTable_[youFileName]
     tokenFlow_[youFileName]
+  
+PS: We are facing some problems with LF and CRLF files with Notepad for breaking lines, so we higlhy encourage the usage of another text file editor (Eg. Notepad++).
 
 ![gopher-working](go-wip.gif)
