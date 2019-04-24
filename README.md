@@ -21,6 +21,11 @@ mkdir results
 executable/lexicalAnalysis-[your-OS] [path/to/the/file]
 ```
 
+Example:
+```bash
+executable/lexicalAnalysis-Windows-Intel.exe examples/math/simple.txt
+```
+
 It will generate 2 new files that you can find at `results`:
 
     symbolTable_[youFileName]
