@@ -17,6 +17,7 @@ go run main.go [path/to/the/file]
 
 Just run in your command line:
 ```bash
+mkdir results
 executable/lexicalAnalysis-[your-OS] [path/to/the/file]
 ```
 
