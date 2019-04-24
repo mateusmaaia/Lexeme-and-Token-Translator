@@ -96,7 +96,7 @@ func Read(path string) bool {
 		actualLine := lexerToken.Position.Line
 
 		if actualLine > olderLine {
-			tokenFlow += fmt.Sprintf("\r?\n")
+			tokenFlow += fmt.Sprintf("\r\n")
 		}
 
 		tokenFlow += fmt.Sprintf("<%s,%v>", lexerToken.Type, x.tokens[lexerToken.Literal].tokenMapPosition)
@@ -104,7 +104,7 @@ func Read(path string) bool {
 	}
 
 	for _, values := range x.tokens {
-		simbleTable += fmt.Sprintf("Lexeme: %s, Token: %s, Positions(LxC): %v\r?\n",
+		simbleTable += fmt.Sprintf("Lexeme: %s, Token: %s, Positions(LxC): %v\r\n",
 				values.name,
 				values.tokenType,
 				values.positions,
