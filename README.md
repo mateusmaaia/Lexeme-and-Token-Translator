@@ -21,6 +21,7 @@ executable/lexicalAnalysis-[your-OS] [path/to/the/file]
 ```
 
 It will generate 2 new files that you can find at `results`:
+
     symbolTable_[youFileName]
     tokenFlow_[youFileName]
 
